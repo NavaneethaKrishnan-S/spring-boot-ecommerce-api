@@ -1,0 +1,20 @@
+package com.codewithnaveen.ecommerce.controllers;
+
+import com.codewithnaveen.ecommerce.entities.User;
+import com.codewithnaveen.ecommerce.repositories.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@AllArgsConstructor
+public class UserController {
+
+    private final UserRepository userRepository;
+
+    @GetMapping("/users")
+    public Iterable<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+
+}
