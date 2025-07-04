@@ -1,6 +1,7 @@
 package com.codewithnaveen.ecommerce.controllers;
 
 import com.codewithnaveen.ecommerce.dtos.UserDto;
+import com.codewithnaveen.ecommerce.mappers.UserMapper;
 import com.codewithnaveen.ecommerce.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @GetMapping
     public Iterable<UserDto> getAllUsers(){
         return userRepository.findAll()
                 .stream()
-                .map(user -> new UserDto(user.getId(), user.getName(), user.getEmail()))
+                .map(userMapper::toDto)
                 .toList();
     }
 
@@ -31,9 +33,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        var userDto = new UserDto(user.getId(), user.getName(), user.getEmail());
-
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
 }
