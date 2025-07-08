@@ -1,6 +1,7 @@
 package com.codewithnaveen.ecommerce.controllers;
 
 import com.codewithnaveen.ecommerce.dtos.RegisterUserRequest;
+import com.codewithnaveen.ecommerce.dtos.UpdateUserRequest;
 import com.codewithnaveen.ecommerce.dtos.UserDto;
 import com.codewithnaveen.ecommerce.mappers.UserMapper;
 import com.codewithnaveen.ecommerce.repositories.UserRepository;
@@ -55,6 +56,22 @@ public class UserController {
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(userDto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(userDto);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<UserDto> updateUser(
+            @PathVariable(name = "id") Long id,
+            @RequestBody UpdateUserRequest request){
+
+        var user = userRepository.findById(id).orElse(null);
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        userMapper.update(request, user);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
 }
