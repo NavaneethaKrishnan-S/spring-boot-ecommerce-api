@@ -16,12 +16,13 @@ import java.util.UUID;
 public class Cart {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;
 
     @Column(name = "date_created", insertable = false, updatable = false)
     private LocalDate dateCreated;
 
+    @OneToMany(mappedBy = "cart")
     private Set<CartItem> cartItems = new LinkedHashSet<>();
 }
