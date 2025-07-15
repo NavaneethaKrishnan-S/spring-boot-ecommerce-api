@@ -5,7 +5,6 @@ import com.codewithnaveen.ecommerce.dtos.CartDto;
 import com.codewithnaveen.ecommerce.dtos.CartItemDto;
 import com.codewithnaveen.ecommerce.dtos.UpdateCartItemRequest;
 import com.codewithnaveen.ecommerce.entities.Cart;
-import com.codewithnaveen.ecommerce.entities.CartItem;
 import com.codewithnaveen.ecommerce.mappers.CartMapper;
 import com.codewithnaveen.ecommerce.repositories.CartRepository;
 import com.codewithnaveen.ecommerce.repositories.ProductRepository;
@@ -16,8 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.UUID;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/carts")
@@ -103,5 +102,24 @@ public class CartController {
         cartRepository.save(cart);
 
         return ResponseEntity.ok(cartMapper.toDto(cartItem));
+    }
+
+    @DeleteMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<?> removeItem(
+            @PathVariable UUID cartId,
+            @PathVariable Long productId
+    ){
+        var cart = cartRepository.getCartWithItems(cartId).orElse(null);
+        if(cart == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    Map.of("error", "Cart was not found")
+            );
+        }
+
+        cart.removeItem(productId);
+
+        cartRepository.save(cart);
+
+        return ResponseEntity.noContent().build();
     }
 }
