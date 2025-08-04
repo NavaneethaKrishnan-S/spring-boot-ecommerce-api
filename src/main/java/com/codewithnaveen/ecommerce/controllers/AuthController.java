@@ -6,6 +6,8 @@ import com.codewithnaveen.ecommerce.dtos.UserLoginRequest;
 import com.codewithnaveen.ecommerce.mappers.UserMapper;
 import com.codewithnaveen.ecommerce.repositories.UserRepository;
 import com.codewithnaveen.ecommerce.services.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> loginRequest(
-            @Valid @RequestBody UserLoginRequest request
+            @Valid @RequestBody UserLoginRequest request,
+            HttpServletResponse response
             ){
 
         authenticationManager.authenticate(
@@ -39,10 +42,17 @@ public class AuthController {
         );
 
         var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
 
-        var token = jwtService.generateToken(user);
+        var cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/auth/refresh");
+        cookie.setMaxAge(604800); //7d
+        cookie.setSecure(true);
+        response.addCookie(cookie);
 
-        return ResponseEntity.ok(new JwtResponse(token));
+        return ResponseEntity.ok(new JwtResponse(accessToken));
     }
 
     @PostMapping("/validate")
