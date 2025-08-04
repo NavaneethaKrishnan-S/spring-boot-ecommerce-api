@@ -1,5 +1,6 @@
 package com.codewithnaveen.ecommerce.controllers;
 
+import com.codewithnaveen.ecommerce.config.JwtConfig;
 import com.codewithnaveen.ecommerce.dtos.JwtResponse;
 import com.codewithnaveen.ecommerce.dtos.UserDto;
 import com.codewithnaveen.ecommerce.dtos.UserLoginRequest;
@@ -25,6 +26,7 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final JwtConfig jwtConfig;
     private UserRepository userRepository;
     private UserMapper userMapper;
 
@@ -48,7 +50,7 @@ public class AuthController {
         var cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
         cookie.setPath("/auth/refresh");
-        cookie.setMaxAge(604800); //7d
+        cookie.setMaxAge(jwtConfig.getRefreshTokenExpiration()); //7d
         cookie.setSecure(true);
         response.addCookie(cookie);
 
