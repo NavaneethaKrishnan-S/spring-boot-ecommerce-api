@@ -4,6 +4,7 @@ import com.codewithnaveen.ecommerce.dtos.ChangePasswordRequest;
 import com.codewithnaveen.ecommerce.dtos.RegisterUserRequest;
 import com.codewithnaveen.ecommerce.dtos.UpdateUserRequest;
 import com.codewithnaveen.ecommerce.dtos.UserDto;
+import com.codewithnaveen.ecommerce.entities.Role;
 import com.codewithnaveen.ecommerce.mappers.UserMapper;
 import com.codewithnaveen.ecommerce.repositories.UserRepository;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -24,6 +26,7 @@ public class UserController {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     public Iterable<UserDto> getAllUsers(
@@ -60,6 +63,8 @@ public class UserController {
             );
         }
         var user = userMapper.toEntity(request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         var userDto = userMapper.toDto(user);
