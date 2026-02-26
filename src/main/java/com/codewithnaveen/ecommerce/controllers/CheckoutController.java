@@ -4,8 +4,6 @@ import com.codewithnaveen.ecommerce.dtos.CheckoutRequest;
 import com.codewithnaveen.ecommerce.dtos.CheckoutResponse;
 import com.codewithnaveen.ecommerce.dtos.ErrorDto;
 import com.codewithnaveen.ecommerce.entities.Order;
-import com.codewithnaveen.ecommerce.entities.OrderItem;
-import com.codewithnaveen.ecommerce.entities.OrderStatus;
 import com.codewithnaveen.ecommerce.repositories.CartRepository;
 import com.codewithnaveen.ecommerce.repositories.OrderRepository;
 import com.codewithnaveen.ecommerce.services.AuthService;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -47,24 +43,11 @@ public class CheckoutController {
             );
         }
 
-        var order = new Order();
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus(OrderStatus.PENDING);
-        order.setCustomer(authService.getCurrentUser());
-
-        cart.getItems().forEach(item -> {
-            var orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setTotalPrice(item.getTotalPrice());
-            orderItem.setUnitPrice(item.getProduct().getPrice());
-            order.getItems().add(orderItem);
-        });
+        var order = Order.fromCart(cart, authService.getCurrentUser());
 
         orderRepository.save(order);
 
-        cartService.clearAllItemsFromCart(cart.getId());
+        cartService.clearCart(cart.getId());
 
         return ResponseEntity.ok(new CheckoutResponse(order.getId()));
     }

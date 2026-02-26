@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -83,7 +82,7 @@ public class CartController {
     @Operation(summary = "Empty a cart")
     public ResponseEntity<Void> clearCart(@PathVariable UUID cartId){
 
-        cartService.clearAllItemsFromCart(cartId);
+        cartService.clearCart(cartId);
 
         return ResponseEntity.noContent().build();
     }
