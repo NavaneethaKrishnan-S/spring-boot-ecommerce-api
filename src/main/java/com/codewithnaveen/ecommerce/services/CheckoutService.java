@@ -10,10 +10,13 @@ import com.codewithnaveen.ecommerce.repositories.OrderRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class CheckoutService {
     @Value("${websiteUrl}")
     private String websiteUrl;
 
+    @Transactional
     public CheckoutResponse checkout(CheckoutRequest request) throws StripeException {
         var cart = cartRepository.getCartWithItems(request.getCartId()).orElse(null);
         if(cart == null){
@@ -52,8 +56,10 @@ public class CheckoutService {
                         .setQuantity(Long.valueOf(item.getQuantity()))
                         .setPriceData(
                                 SessionCreateParams.LineItem.PriceData.builder()
-                                        .setCurrency("inr")
-                                        .setUnitAmountDecimal(item.getUnitPrice())
+                                        .setCurrency("usd")
+                                        .setUnitAmountDecimal(
+                                                item.getUnitPrice().multiply(BigDecimal.valueOf(100))
+                                        )
                                         .setProductData(
                                                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                                         .setName(item.getProduct().getName())
@@ -69,6 +75,7 @@ public class CheckoutService {
 
             return new CheckoutResponse(order.getId(), session.getUrl());
         } catch (StripeException ex) {
+            System.out.println(ex.getMessage());
             orderRepository.delete(order);
             throw ex;
         }
