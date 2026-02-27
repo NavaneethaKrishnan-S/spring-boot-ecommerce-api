@@ -90,7 +90,7 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    public void clearAllItemsFromCart(UUID cartId){
+    public void clearCart(UUID cartId){
 
         var cart = cartRepository.getCartWithItems(cartId).orElse(null);
         if(cart == null){
