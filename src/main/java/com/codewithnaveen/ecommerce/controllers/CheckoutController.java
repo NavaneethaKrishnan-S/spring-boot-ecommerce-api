@@ -7,14 +7,14 @@ import com.codewithnaveen.ecommerce.exceptions.CartEmptyException;
 import com.codewithnaveen.ecommerce.exceptions.CartNotFoundException;
 import com.codewithnaveen.ecommerce.exceptions.PaymentException;
 import com.codewithnaveen.ecommerce.services.CheckoutService;
-import com.stripe.exception.SignatureVerificationException;
-import com.stripe.net.Webhook;
+import com.codewithnaveen.ecommerce.services.WebhookRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,37 +22,17 @@ import org.springframework.web.bind.annotation.*;
 public class CheckoutController {
     private final CheckoutService checkoutService;
 
-    @Value("${stripe.webhookSecretKey}")
-    private String webhookSecretKey;
-
     @PostMapping
     public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request){
             return checkoutService.checkout(request);
     }
 
     @PostMapping("/webhook")
-    public ResponseEntity<Void> handleWebhook(
-            @RequestHeader("Stripe-Signature") String signature,
+    public void handleWebhook(
+            @RequestHeader Map<String, String> headers,
             @RequestBody String payload
     ){
-        try {
-            var event = Webhook.constructEvent(payload, signature, webhookSecretKey);
-            System.out.println(event.getType());
-
-            var stripeObject = event.getDataObjectDeserializer().getObject().orElse(null);
-            switch (event.getType()) {
-                case "payment_intent.succeeded" -> {
-                    //update order status (PAID)
-                }
-                case "payment_intent.failed" -> {
-                    //update order status (FAILED)
-                }
-            }
-
-            return ResponseEntity.ok().build();
-        } catch (SignatureVerificationException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        checkoutService.handleWebhookEvent(new WebhookRequest(headers, payload));
     }
 
     @ExceptionHandler(PaymentException.class)

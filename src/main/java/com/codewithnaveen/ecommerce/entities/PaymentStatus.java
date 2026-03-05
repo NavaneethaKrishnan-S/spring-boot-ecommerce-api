@@ -1,6 +1,6 @@
 package com.codewithnaveen.ecommerce.entities;
 
-public enum OrderStatus {
+public enum PaymentStatus {
     PENDING,
     PAID,
     FAILED,
