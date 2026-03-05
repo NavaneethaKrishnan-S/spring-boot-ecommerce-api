@@ -1,4 +1,4 @@
-package com.codewithnaveen.ecommerce.dtos;
+package com.codewithnaveen.ecommerce.payments;
 
 import lombok.Data;
 

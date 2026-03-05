@@ -1,4 +1,4 @@
-package com.codewithnaveen.ecommerce.exceptions;
+package com.codewithnaveen.ecommerce.payments;
 
 import lombok.NoArgsConstructor;
 

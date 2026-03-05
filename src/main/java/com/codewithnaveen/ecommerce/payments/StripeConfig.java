@@ -1,4 +1,4 @@
-package com.codewithnaveen.ecommerce.config;
+package com.codewithnaveen.ecommerce.payments;
 
 import com.stripe.Stripe;
 import jakarta.annotation.PostConstruct;

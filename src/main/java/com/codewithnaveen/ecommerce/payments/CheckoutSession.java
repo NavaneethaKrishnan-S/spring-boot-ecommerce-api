@@ -1,4 +1,4 @@
-package com.codewithnaveen.ecommerce.services;
+package com.codewithnaveen.ecommerce.payments;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

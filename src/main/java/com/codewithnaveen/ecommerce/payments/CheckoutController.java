@@ -1,13 +1,8 @@
-package com.codewithnaveen.ecommerce.controllers;
+package com.codewithnaveen.ecommerce.payments;
 
-import com.codewithnaveen.ecommerce.dtos.CheckoutRequest;
-import com.codewithnaveen.ecommerce.dtos.CheckoutResponse;
 import com.codewithnaveen.ecommerce.dtos.ErrorDto;
 import com.codewithnaveen.ecommerce.exceptions.CartEmptyException;
 import com.codewithnaveen.ecommerce.exceptions.CartNotFoundException;
-import com.codewithnaveen.ecommerce.exceptions.PaymentException;
-import com.codewithnaveen.ecommerce.services.CheckoutService;
-import com.codewithnaveen.ecommerce.services.WebhookRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

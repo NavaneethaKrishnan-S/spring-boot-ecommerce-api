@@ -1,9 +1,8 @@
-package com.codewithnaveen.ecommerce.services;
+package com.codewithnaveen.ecommerce.payments;
 
 import com.codewithnaveen.ecommerce.entities.Order;
 import com.codewithnaveen.ecommerce.entities.OrderItem;
 import com.codewithnaveen.ecommerce.entities.PaymentStatus;
-import com.codewithnaveen.ecommerce.exceptions.PaymentException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;

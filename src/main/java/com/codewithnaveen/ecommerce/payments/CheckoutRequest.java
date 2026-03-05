@@ -1,4 +1,4 @@
-package com.codewithnaveen.ecommerce.dtos;
+package com.codewithnaveen.ecommerce.payments;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
